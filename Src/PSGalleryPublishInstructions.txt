@@ -1,0 +1,62 @@
+$releaseNotes = @'
+What's New in PSCX 3.2.0
+October 23, 2014
+
+* New Edit-File cmdlet that edits a file in-place using regular expressions
+  and corresponding replacement strings.  The cmdlet attempts to determine
+  the original encoding of the file and preserve that encoding.
+
+* Fixed issue with the nested FileSystem module.  It's format data had to be
+  updated to handle wider column output from Get-ChildItem now that WMF 5.0
+  supports creating symbolic links, hard links, etc.
+
+* Import-VisualStudioVars has been updated to handle VS 14 CTP by allowing you 
+  to specify version number 140. This should work with future versions of VS.
+
+* The [hex] accelerator type was added in a previous release but was not 
+  added to PowerShell's type accelerators.  The accelerator is now loaded 
+  by the Pscx.Utility nested module.  You can now convert a decimal number 
+  to hex easily e.g. [hex]32 gives 0x20.
+
+* Read-Archive has been changed to output individual ArchiveEntry objects 
+  instead of a single collection object.  This allows you to filter which 
+  items are extracted e.g.:
+
+  Read-Archive foo.zip | Where Name -match \.txt | Expand-Archive -Out c:\temp
+
+* Expand-Archive now implements the PassThru parameter allowing functionality
+  such as:
+
+  Expand-Archive foo.zip -Output c:\temp -PassThru | Move-Item -Dest c:\done
+
+* Fixed documentation bug with Set-LocationEx. CD_EchoNewLocation was 
+  incorrectly specified as CD/EchoNewLocation.
+
+* Changed the default value of CD_EchoNewLocation to False as the use of
+  Write-Host to display the new CD location offends some folks.  You can
+  turn it back by putting this in your profile (or set the value in your
+  Pscx.UserPreferences.ps1 file):
+
+  $Pscx:Preferences.CD_EchoNewLocation = $true
+
+* Fixed issue 35430 - Invoke-BatchFile messes up encoding on non-English
+  systems.
+
+* Fixed issue 355537 - Default format information missing for 
+  Pscx.Commands.Modules.Utility.ExecutionTimeInfo.
+
+* Issues 35314 and 35256 indicate some bugs with the Get-Help proxy
+  command.  For now, we will not automticallly load this nested module.
+  You can enable if you want by editing the Pscx.UserPreferences.ps1
+  file and setting ModulesToImport -> GetHelp to $true.
+'@
+
+$nugetApiKey = '--------------------------'
+$projectUri = 'http://pscx.codeplex.com/'
+$licenseUri = 'http://pscx.codeplex.com/license'
+$iconUri = 'http://download-codeplex.sec.s-msft.com/Download?ProjectName=pscx&DownloadId=8046&Build=20941'
+$tags = 'Utilities','Xml','Zip','Clipboard','Base64','ShortPath','PEHeader'
+
+Publish-Module -Path $home\Documents\WindowsPowerShell\Modules\Pscx -NuGetApiKey $nugetApiKey `
+               -ProjectUri $projectUri -LicenseUri $licenseUri -IconUri $iconUri -Tags $tags `
+               -ReleaseNotes $releaseNotes
